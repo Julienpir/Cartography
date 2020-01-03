@@ -40,12 +40,6 @@ f.close(); // fermeture du fichier
 }
 
 
-
-
-
-/*
-
-
 int main(int argc,char *argv[]){
 	int res = 0;
 	string name;
@@ -57,21 +51,15 @@ int main(int argc,char *argv[]){
 	else{
 		cout << "Error, Arguments manquants (nom fichier, taille)"<< endl;
 	} 
-*/
 
-int main() {
-
-	int res = 5000;
-	string name = "data.txt";
 
 	// definition des variables:
-	vector<double> v;
-	map <pair<double,double>,float> mape;
-	vector<double> extreMome;
-	vector<double> values; // valeurs max et min des mesures
+	map <pair<double,double>,float> mape; // mape un disctionnaire avec les coordonnées des points sous forme de pair et leur valeur en z
+	vector<double> extreMome; // extreMome un vecteur renseignant des valeurs limites des coordonnées (xmax,xmin,ymax,ymin)
+	vector<double> values; // values un vecteur renseignant des valeurs limites des points (zmin, zmax)
 
-	vector<double> coords; // liste des points
-	map <pair<int,int>,vector<triangle>> triangle_sorted;
+	vector<double> coords; // un vecteur des points
+	map <pair<int,int>,vector<triangle>> triangle_sorted; // triangle_sorted un dictionnaire de triangles assignés à une zone
 	vector<triangle> triangle_de_la_zone;
 
 
@@ -79,35 +67,26 @@ int main() {
 	ColourManager::Init_ColourManager();
 
 	string file_name = "carte.pgm";
-	
-	read_datas(name,coords,mape,extreMome,values);
+	read_datas(name,coords,mape,extreMome,values); // on lit les données
 
-    delaunator::Delaunator d(coords);
-    //cout << d.triangles.size()/6 << endl;
+    delaunator::Delaunator d(coords); // on recupère les triangles
 	
     int grid = (int)res/2; // nombe de lignes et de colonnes de la découpe en zone
-	/*if (grid > 500){
-		grid = 500;
-	}*/
-
     double resx = res;
     double resy = res;
-
     float ombrage;
 
     vector<vector<vector<int>>> *im = new vector<vector<vector<int>>> (resx, vector<vector<int>> (resy,vector<int> (3,255))); // vector contenant pour chaque case les valeurs RGB
 
     double xmin,xmax,ymin,ymax,zmin,zmax ; 
-    
     extrait_valeur_lim(extreMome, values, xmin, xmax, ymin, ymax, zmin, zmax); 
 
-    double pasx = (xmax - xmin) / resx ;
-    double pasy = (ymax - ymin) / resy;
+    double pasx = (xmax - xmin) / resx ; // on définit le pas en x
+    double pasy = (ymax - ymin) / resy; // on définit le pas en y
 
+    segmentation_triangle(d,extreMome,grid,triangle_sorted); // on sépare les triangles dans des zones
 
-    segmentation_triangle(d,extreMome,grid,triangle_sorted);
-
-    double pixel_x;
+    double pixel_x; 
     double pixel_y;
 	double moy = 0;
 
@@ -156,8 +135,8 @@ int main() {
     		pixel_x = pasx*j + xmin + pasx/2; 
     		pixel_y = pasy*i + ymin + pasy/2; 
 
-    		num_zone = find_zone(pixel_x, pixel_y , extreMome, grid);
-    		triangle_de_la_zone = triangle_sorted[num_zone];
+    		num_zone = find_zone(pixel_x, pixel_y , extreMome, grid); // on récupère le numéro de la zone ou est notre pixel
+    		triangle_de_la_zone = triangle_sorted[num_zone]; // on récupère ensuite les triangles concercés (qui sont dans cette zone)
     		
     		for(std::size_t k = 0; k < triangle_de_la_zone.size(); k++) {
 			
@@ -169,8 +148,7 @@ int main() {
 					h1 = mape[triangle_de_la_zone[k].coord1];
 					h2 = mape[triangle_de_la_zone[k].coord2];
 
-					ombrage = shaddow(triangle_de_la_zone[k], mape, extreMome, pixel_x);
-
+					ombrage = shaddow(triangle_de_la_zone[k], mape, extreMome, pixel_x); // prend en compte l'ombrage
 
 					moy = (h0+h1+h2) * ombrage /3;
 					//moy = (h0+h1+h2)/3;

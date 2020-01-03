@@ -60,25 +60,25 @@ else{
 	}
 	
 
-	extreMome.push_back(*std::min_element(liste_x.begin(), liste_x.end()));
-	extreMome.push_back(*std::max_element(liste_x.begin(), liste_x.end()));
-	extreMome.push_back(*std::min_element(liste_y.begin(), liste_y.end()));
-	extreMome.push_back(*std::max_element(liste_y.begin(), liste_y.end()));
+	extreMome.push_back(*std::min_element(liste_x.begin(), liste_x.end())); // on extrait xmin
+	extreMome.push_back(*std::max_element(liste_x.begin(), liste_x.end())); // on extrait xmax
+	extreMome.push_back(*std::min_element(liste_y.begin(), liste_y.end())); // on extrait ymin
+	extreMome.push_back(*std::max_element(liste_y.begin(), liste_y.end())); // on extrait ymax
 
-	values.push_back(*std::min_element(liste_z.begin(), liste_z.end()));
-	values.push_back(*std::max_element(liste_z.begin(), liste_z.end()));
+	values.push_back(*std::min_element(liste_z.begin(), liste_z.end())); // on extrait zmin
+	values.push_back(*std::max_element(liste_z.begin(), liste_z.end())); // on extrait zmax
 
 }
 
 f.close(); 
 }
 
-double sign(double p1x, double p1y, double p2x, double p2y, double p3x, double p3y)
+double sign(double p1x, double p1y, double p2x, double p2y, double p3x, double p3y) // afin de savoir le signe entre 2 points 
 {
     return (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y);
 }
 
-double extrait_point(triangle trg, double &x0, double &y0, double &x1, double &y1, double &x2, double &y2){
+double extrait_point(triangle trg, double &x0, double &y0, double &x1, double &y1, double &x2, double &y2){ // récupère les données de la structure triangle
 	
 	x0 = trg.coord0.first;
 	x1 = trg.coord1.first;
@@ -90,7 +90,7 @@ double extrait_point(triangle trg, double &x0, double &y0, double &x1, double &y
 }
 
 double extrait_valeur_lim(vector<double> &extreMome, vector<double> &values, double &xmin, double &xmax, double &ymin, double &ymax, double &zmin, double &zmax){
-
+// récupère les données de extreMome et values
 	xmin = extreMome[0];
     xmax = extreMome[1];
     ymin = extreMome[2];
@@ -123,7 +123,6 @@ bool in_triangle(double x, double y, triangle trg){
 }
 
 float shaddow(triangle trg,map <pair<double,double>,float> &mape,vector<double> &extreMome, float pixel_x){ // fonction pour déterminer l'ombrage
-//void shaddow(triangle trg, map <pair<double,double>,float> mape, vector<double> extreMome, float pixel_x){ // fonction pour déterminer l'ombrage
 // on récupère 2 vecteurs définissant notre triangle
 	triple vec1;
 	vec1.first = trg.coord1.first - trg.coord0.first;
@@ -158,7 +157,7 @@ float shaddow(triangle trg,map <pair<double,double>,float> &mape,vector<double> 
 	float i = 1;
 
 	if (angle < 90 and angle > -90){
-		i = 1 + 0.7*(abs(angle) - 90)/90 ; // 0.3 la veleur minimum
+		i = 1 + 0.7*(abs(angle) - 90)/90 ; // 0.3 la valeur minimum
 	}	// extremum en 0 degré
 	
 
@@ -184,9 +183,9 @@ pair<int,int> find_zone(double x, double y, vector<double> extreMome, int n ){
 return pair<int,int> (k,l);
 }
 
-void segmentation_triangle(delaunator::Delaunator d, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted){
-	
 
+void segmentation_triangle(delaunator::Delaunator d, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted){
+// fonction qui permet de séparer les triangles en petit groupe grace à des zones dans le but de limiter les itérations et gagner en temps de calcul
     triangle triag; 
 
     pair<int,int> num_zone1;
@@ -224,7 +223,7 @@ void segmentation_triangle(delaunator::Delaunator d, vector<double> extreMome, i
 		
 
 		//Delaunator crée une enveloppe convexe, on recherche donc les faux triangles
-		double carte_x_max,carte_x_min,carte_y_min,carte_y_max,pas_x,pas_y;
+		double carte_x_max, carte_x_min, carte_y_min, carte_y_max, pas_x, pas_y;
 		carte_x_max = extreMome[1];
 		carte_x_min = extreMome[0];
 		carte_y_min = extreMome[2];
