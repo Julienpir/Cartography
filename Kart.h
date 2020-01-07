@@ -10,7 +10,7 @@ using namespace std ;
 #include <string.h>
 #include <stdio.h>
 #include <vector>
-#include "delaunator.hpp"
+
 
 
 
@@ -21,12 +21,12 @@ struct triangle { // permet de transporter les 3 coordonées du triangle plus fa
 	pair<double,double> coord2;
 };
 
-void read_datas(string name, vector<double> &v, map <pair<double,double>,float> &mape, vector<double> &extreMome, vector<double> &values);
+void read_datas(string name, vector<double> &coords, map <pair<double,double>,float> &mape, vector<double> &extreMome, vector<double> &values);
 /**
  		* \brief	Permet de traiter les données 
  		* \details	Va lire le dossier et y extraire les données afin de pouvoir construire la carte
  		* \param	name un string renseignant du nom du fichier de donnée à lire
- 		* \param	&v un vecteur des points
+ 		* \param	&coords un vecteur des points
  		* \param	&mape un disctionnaire avec les coordonnées des points sous forme de pair et leur valeur en z
  		* \param	&extreMome un vecteur renseignant des valeurs limites des coordonnées (xmax,xmin,ymax,ymin)
  		* \param	&values un vecteur renseignant des valeurs limites des points (zmin, zmax)
@@ -93,11 +93,11 @@ pair<int,int> find_zone(double x, double y, vector<double> extreMome, int n );
  		*/
 
 
-void segmentation_triangle(delaunator::Delaunator d, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted);
+void segmentation_triangle( vector<double> &coords, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted);
 /**
  		* \brief	Permet de trier les triangles dans des zones plus petites
  		* \details	Nécessaire afin de gagner en rapidité 
- 		* \param	d une structure delaunator transportant les triangles
+ 		* \param	coords un vecteur des points
  		* \param	&extreMome un vecteur renseignant des valeurs limites des coordonnées (xmax,xmin,ymax,ymin)
  		* \param	&triangle_sorted un dictionnaire de triangles assignés à une zone
  		* \return	retourne triangle_sorted remplie 

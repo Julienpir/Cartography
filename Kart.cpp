@@ -11,12 +11,12 @@
 #include <stdio.h>
 #include <algorithm>
 #include <fstream>
+#include "delaunator.hpp"
 
 
 
 
-
-void read_datas(string name, vector<double> &v, map <pair<double,double>,float> &mape, vector<double> &extreMome, vector<double> &values){
+void read_datas(string name, vector<double> &coords, map <pair<double,double>,float> &mape, vector<double> &extreMome, vector<double> &values){
 
 string filename = "../Datas/" + name;
 
@@ -46,11 +46,11 @@ else{
 	    float z = std::stof(token);
 		float x = 0.; // initialise les coord
 		float y = 0.;
-	    GPS_to_XY( lx, ly, x, y); // donne les coord
-	    v.push_back(x);
+	    GPS_to_XY(lx, ly, x, y); // donne les coord
+	    coords.push_back(x);
 	    liste_x.push_back(x);
 
-	    v.push_back(y);
+	    coords.push_back(y);
 	    liste_y.push_back(y);
 
 	    liste_z.push_back(z);
@@ -184,8 +184,12 @@ return pair<int,int> (k,l);
 }
 
 
-void segmentation_triangle(delaunator::Delaunator d, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted){
+void segmentation_triangle( vector<double> &coords, vector<double> extreMome, int n, map <pair<int,int>,vector<triangle>> &triangle_sorted){
 // fonction qui permet de séparer les triangles en petit groupe grace à des zones dans le but de limiter les itérations et gagner en temps de calcul
+
+delaunator::Delaunator d(coords); // on recupère les triangles
+
+
     triangle triag; 
 
     pair<int,int> num_zone1;

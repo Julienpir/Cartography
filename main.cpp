@@ -69,7 +69,7 @@ int main(int argc,char *argv[]){
 	string file_name = "carte.pgm";
 	read_datas(name,coords,mape,extreMome,values); // on lit les données
 
-    delaunator::Delaunator d(coords); // on recupère les triangles
+    //delaunator::Delaunator d(coords); // on recupère les triangles
 	
     int grid = (int)res/2; // nombe de lignes et de colonnes de la découpe en zone
     double resx = res;
@@ -84,7 +84,7 @@ int main(int argc,char *argv[]){
     double pasx = (xmax - xmin) / resx ; // on définit le pas en x
     double pasy = (ymax - ymin) / resy; // on définit le pas en y
 
-    segmentation_triangle(d,extreMome,grid,triangle_sorted); // on sépare les triangles dans des zones
+    segmentation_triangle(coords, extreMome,grid,triangle_sorted); // on sépare les triangles dans des zones
 
     double pixel_x; 
     double pixel_y;
